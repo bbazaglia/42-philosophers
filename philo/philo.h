@@ -6,13 +6,14 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:04 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/03 16:38:41 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:06:20 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
 # define PHILO_H
 
+# include <limits.h>
 # include <pthread.h>
 # include <stdbool.h>
 # include <stdio.h>
@@ -20,36 +21,106 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+/*-------------------ANSI Escape Sequences for Bold Text Colors--------------*/
+# define RST "\033[0m"    /* Reset to default color */
+# define RED "\033[1;31m" /* Bold Red */
+# define G "\033[1;32m"   /* Bold Green */
+# define Y "\033[1;33m"   /* Bold Yellow */
+# define B "\033[1;34m"   /* Bold Blue */
+# define M "\033[1;35m"   /* Bold Magenta */
+# define C "\033[1;36m"   /* Bold Cyan */
+# define W "\033[1;37m"   /* Bold White */
+
+/*-------------------STRUCTS-------------------------------------------------*/
+
+typedef pthread_mutex_t	t_mtx;
+
+typedef struct s_data	t_data;
+
+typedef enum e_action
+{
+	LOCK,
+	UNLOCK,
+	INIT,
+	DESTROY,
+	CREATE,
+	JOIN,
+	DETACH,
+}						t_action;
+
+typedef enum e_status
+{
+	EATING,
+	SLEEPING,
+	THINKING,
+	TOOK_FIRST_FORK,
+	TOOK_SECOND_FORK,
+	DEAD,
+}						t_status;
+
+typedef struct s_fork
+{
+	t_mtx				fork;
+	int					fork_id;
+}						t_fork;
+
 typedef struct s_philo
 {
-	int				id;
-	pthread_t		*thread;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
-	long			last_meal;
-	int				meals_eaten;
-	t_data *data
-}					t_philo;
+	int					id;
+	long				meals_eaten;
+	long				last_meal;
+	bool				full;
+	t_fork				*first_fork;
+	t_fork				*second_fork;
+	pthread_t			thread_id;
+	t_mtx				philo_mutex;
+	t_mtx				write_mutex;
+	t_data				*data;
+}						t_philo;
 
 typedef struct s_data
 {
-	long			start_time;
-	int				num_philosophers;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				meals_required;
-	bool			end_simulation;
-	t_philo			*philosophers;
-	pthread_mutex_t	*forks;
-}					t_data;
+	int					num_philo;
+	int					time_to_die;
+	int					time_to_eat;
+	int					time_to_sleep;
+	int					meals_required;
+	long				start_time;
+	bool				end_simulation;
+	bool				all_threads_created;
+	t_fork				*forks;
+	t_philo				*philo;
+	t_mtx				data_mutex;
+}						t_data;
 
-long				ft_atol(char *str);
-int					ft_isdigit(int c);
-void				init_data(t_data **data, char **argv);
-void				init_philos(t_data *data);
-void				args_validation(int argc, char **argv);
-long				get_time_in_ms(void);
-void				cleanup(t_data *data);
+/*-------------------FUNCTIONS-----------------------------------------------*/
+
+/*-------------------PARSE INPUT---------------------------------------------*/
+void					args_validation(int argc, char **argv);
+void					init_data(t_data *data, char **argv);
+
+/*-------------------SAFE FUNCTIONS------------------------------------------*/
+void					*safe_malloc(size_t size);
+void					safe_thread(t_action action, pthread_t *thread,
+							void *(*routine)(void *), t_data *data);
+void					safe_mutex(t_action action, t_mtx *mtx);
+
+/*-------------------GETTERS AND SETTERS-------------------------------------*/
+void					set_bool(t_mtx *mtx, bool *var, bool value);
+bool					get_bool(t_mtx *mtx, bool *var);
+void					set_long(t_mtx *mtx, long *var, long value);
+long					get_long(t_mtx *mtx, long *var);
+
+/*-------------------ROUTINE-------------------------------------------------*/
+void					start_simulation(t_data *data);
+
+/*-------------------UTILS---------------------------------------------------*/
+void					write_status(t_status status, t_philo *philo);
+long					ft_atol(char *str);
+int						ft_isdigit(int c);
+long					get_time_in_ms(void);
+long					get_time_diff(long start_time);
+void					cleanup(t_data *data);
+void					error_message(void);
 
 #endif

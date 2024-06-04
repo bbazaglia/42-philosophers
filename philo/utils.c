@@ -6,11 +6,37 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:51:48 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/03 16:08:55 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/04 17:14:36 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	write_status(t_status status, t_philo *philo)
+{
+	t_data	*data;
+
+	data = philo->data;
+	if (simulation_finished(data))
+		return ;
+	safe_mutex(LOCK, &(data->write_mutex));
+	if (status == EATING)
+		printf(B "%ld %d is eating" RST "\n", get_time_diff(data->start_time),
+				philo->id);
+	else if (status == SLEEPING)
+		printf(G "%ld %d is sleeping" RST "\n", get_time_diff(data->start_time),
+				philo->id);
+	else if (status == THINKING)
+		printf(Y "%ld %d is thinking" RST "\n", get_time_diff(data->start_time),
+				philo->id);
+	else if (status == TOOK_FIRST_FORK || status == TOOK_SECOND_FORK)
+		printf(W "%ld %d has taken a fork" RST "\n",
+				get_time_diff(data->start_time), philo->id);
+	else if (status == DEAD)
+		printf(RED "%ld %d died" RST "\n", get_time_diff(data->start_time),
+				philo->id);
+	safe_mutex(UNLOCK, &(data->write_mutex));
+}
 
 long	ft_atol(char *str)
 {
@@ -37,20 +63,20 @@ int	ft_isdigit(int c)
 	return (0);
 }
 
-void	cleanup(t_data *data)
-{
-	int	i;
+// void	cleanup(t_data *data)
+// {
+// 	int	i;
 
-	i = 0;
-	while (i < data->num_philosophers)
-	{
-		pthread_mutex_destroy(&(data->forks[i]));
-		free(data->philosophers[i].thread);
-		i++;
-	}
-	free(data->forks);
-	data->forks = NULL;
-	free(data->philosophers);
-	data->philosophers = NULL;
-	free(data);
-}
+// 	i = 0;
+// 	while (i < data->num_philo)
+// 	{
+// 		pthread_mutex_destroy(&(data->forks[i]));
+// 		free(data->philo[i].thread);
+// 		i++;
+// 	}
+// 	free(data->forks);
+// 	data->forks = NULL;
+// 	free(data->philo);
+// 	data->philo = NULL;
+// 	free(data);
+// }
