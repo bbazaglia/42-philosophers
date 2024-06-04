@@ -6,7 +6,7 @@
 #    By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/03 11:39:42 by bbazagli          #+#    #+#              #
-#    Updated: 2024/06/04 17:17:24 by bbazagli         ###   ########.fr        #
+#    Updated: 2024/06/04 17:23:47 by bbazagli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,8 @@ NAME = philo
 CC = cc
 CFLAGS = -Wall -Wextra -Werror
 VPATH = philo
-SOURCE = args_validation.c getter_setter.c init.c main.c \
-		safe_functions.c start_simulation.c time.c utils.c
+SOURCE = eat_sleep_think.c args_validation.c getter_setter.c init.c main.c \
+		safe_functions.c start_simulation.c take_fork.c time.c utils.c
 OBJDIR = obj
 OBJ = $(patsubst %.c,$(OBJDIR)/%.o,$(SOURCE))
 
