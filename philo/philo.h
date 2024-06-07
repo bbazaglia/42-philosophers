@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:04 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/04 17:06:20 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/07 15:11:36 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,8 @@
 # include <stdlib.h>
 # include <sys/time.h>
 # include <unistd.h>
+
+# define PAUSE 100
 
 /*-------------------ANSI Escape Sequences for Bold Text Colors--------------*/
 # define RST "\033[0m"    /* Reset to default color */
@@ -60,7 +62,7 @@ typedef enum e_status
 
 typedef struct s_fork
 {
-	t_mtx				fork;
+	t_mtx				fork_mutex;
 	int					fork_id;
 }						t_fork;
 
@@ -74,7 +76,6 @@ typedef struct s_philo
 	t_fork				*second_fork;
 	pthread_t			thread_id;
 	t_mtx				philo_mutex;
-	t_mtx				write_mutex;
 	t_data				*data;
 }						t_philo;
 
@@ -89,8 +90,9 @@ typedef struct s_data
 	bool				end_simulation;
 	bool				all_threads_created;
 	t_fork				*forks;
-	t_philo				*philo;
+	t_philo				*philos;
 	t_mtx				data_mutex;
+	t_mtx				print_mutex;
 }						t_data;
 
 /*-------------------FUNCTIONS-----------------------------------------------*/
@@ -104,6 +106,7 @@ void					*safe_malloc(size_t size);
 void					safe_thread(t_action action, pthread_t *thread,
 							void *(*routine)(void *), t_data *data);
 void					safe_mutex(t_action action, t_mtx *mtx);
+void					safe_print(t_philo *philo, t_status status, bool debug);
 
 /*-------------------GETTERS AND SETTERS-------------------------------------*/
 void					set_bool(t_mtx *mtx, bool *var, bool value);
@@ -113,13 +116,26 @@ long					get_long(t_mtx *mtx, long *var);
 
 /*-------------------ROUTINE-------------------------------------------------*/
 void					start_simulation(t_data *data);
+void					eat(t_philo *philo);
+void					think(t_philo *philo);
+void					rest(t_philo *philo);
+
+/*-------------------MONITOR-------------------------------------------------*/
+bool					simulation_finished(t_data *data);
+
+/*-------------------WRITE STATUS--------------------------------------------*/
+void					write_status(t_status status, t_philo *philo,
+							bool debug);
+void					write_debug_status(t_status status, t_philo *philo,
+							bool debug);
+
+/*-------------------TIME----------------------------------------------------*/
+long					get_time_in_ms(void);
+long					timestamp(long start_time);
 
 /*-------------------UTILS---------------------------------------------------*/
-void					write_status(t_status status, t_philo *philo);
 long					ft_atol(char *str);
 int						ft_isdigit(int c);
-long					get_time_in_ms(void);
-long					get_time_diff(long start_time);
 void					cleanup(t_data *data);
 void					error_message(void);
 

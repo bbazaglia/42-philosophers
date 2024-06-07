@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 11:19:57 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/04 11:28:58 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/07 15:13:00 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,19 @@ void	safe_thread(t_action action, pthread_t *thread,
 		status = pthread_detach(*thread);
 	if (status)
 		exit(printf("Thread error\n"));
+}
+
+void	safe_print(t_philo *philo, t_status status, bool debug)
+{
+	t_data	*data;
+
+	data = philo->data;
+	if (simulation_finished(data))
+		return ;
+	safe_mutex(LOCK, &(data->write_mutex));
+	if (debug)
+		write_debug_status(status, philo);
+	else
+		write_status(status, philo);
+	safe_mutex(UNLOCK, &(data->write_mutex));
 }

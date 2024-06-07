@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:49:09 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/04 16:56:39 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/07 15:12:40 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ long	get_time_in_ms(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-long get_time_diff(long start_time)
+long	timestamp(long start_time)
 {
 	return (get_time_in_ms() - start_time);
 }

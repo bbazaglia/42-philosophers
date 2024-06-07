@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:49:01 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/04 16:44:10 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/07 14:44:45 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ static void	init_philos(t_data *data)
 		philo->full = false;
 		assign_forks(i, data);
 		safe_mutex(INIT, &(philo->philo_mutex));
-		safe_mutex(INIT, &(philo->write_mutex));
 		philo->data = data;
 		i++;
 	}
@@ -74,13 +73,14 @@ void	init_data(t_data *data, char **argv)
 		data->meals_required = -1;
 	data->all_threads_created = false;
 	data->forks = safe_malloc(sizeof(t_fork) * data->num_philo);
-	data->philo = safe_malloc(sizeof(t_philo) * data->num_philo);
+	data->philos = safe_malloc(sizeof(t_philo) * data->num_philo);
 	safe_mutex(INIT, &(data->data_mutex));
+	safe_mutex(INIT, &(data->print_mutex));
 	i = 0;
 	while (i < data->num_philo)
 	{
-		safe_mutex(INIT, &(data->forks[i].fork));
-		data->forks[i].fork_id = i;
+		data->forks[i].fork_id = i + 1;
+		safe_mutex(INIT, &(data->forks[i].fork_mutex));
 		i++;
 	}
 	init_philos(data);
