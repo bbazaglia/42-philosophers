@@ -56,7 +56,7 @@ static void	*multiple_routine(void *data_ptr)
 	while (!simulation_finished(data))
 	{
 		eat(philo);
-		sleep(philo);
+		rest(philo);
 		think(philo);
 	}
 	return (NULL);

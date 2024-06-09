@@ -35,7 +35,7 @@ void	eat(t_philo *philo)
 		set_bool(&(philo->philo_mutex), &(philo->full), true);
 }
 
-void	sleep(t_philo *philo)
+void	rest(t_philo *philo)
 {
 	long end_sleeping_time;
 	t_data *data;
@@ -53,6 +53,6 @@ void	sleep(t_philo *philo)
 
 void	think(t_philo *philo)
 {
-	safe_print(THINKING, philo, false);
+	safe_print(philo, THINKING, false);
 	usleep(PAUSE);
 }

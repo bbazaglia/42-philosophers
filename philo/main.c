@@ -12,8 +12,6 @@
 
 #include "philo.h"
 
-// TODO: implement think and sleep functions
-// TODO: implement monitor function
 int	main(int argc, char **argv)
 {
 	t_data	data;

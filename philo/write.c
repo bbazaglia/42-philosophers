@@ -12,7 +12,7 @@
 
 #include "philo.h"
 
-void	write_status(t_status status, t_philo *philo, bool debug)
+void	write_status(int status, t_philo *philo)
 {
 	t_data	*data;
 
@@ -34,13 +34,13 @@ void	write_status(t_status status, t_philo *philo, bool debug)
 		philo->id);
 }
 
-void	write_debug_status(t_status status, t_philo *philo, bool debug)
+void	write_debug_status(int status, t_philo *philo)
 {
 	t_data	*data;
 
 	data = philo->data;
 	if (status == EATING)
-		printf(B "%ld %d is eating for the [%d] time" RST "\n", \
+		printf(B "%ld %d is eating for the [%ld] time" RST "\n", \
 		timestamp(data->start_time), philo->id, philo->meals_eaten);
 	else if (status == SLEEPING)
 		printf(G "%ld %d is sleeping" RST "\n", timestamp(data->start_time), \

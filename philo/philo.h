@@ -50,7 +50,7 @@ typedef enum e_action
 	DETACH,
 }						t_action;
 
-typedef enum e_status
+enum e_status
 {
 	EATING,
 	SLEEPING,
@@ -58,7 +58,7 @@ typedef enum e_status
 	TOOK_FIRST_FORK,
 	TOOK_SECOND_FORK,
 	DEAD,
-}						t_status;
+};
 
 typedef struct s_fork
 {
@@ -104,13 +104,13 @@ void					init_data(t_data *data, char **argv);
 /*-------------------SAFE FUNCTIONS------------------------------------------*/
 void					*safe_malloc(size_t size);
 void					safe_thread(t_action action, pthread_t *thread,
-							void *(*routine)(void *), t_data *data);
+							void *(*routine)(void *), t_philo *philo);
 void					safe_mutex(t_action action, t_mtx *mtx);
-void					safe_print(t_philo *philo, t_status status, bool debug);
+void					safe_print(t_philo *philo, int status, bool debug);
 
 /*-------------------GETTERS AND SETTERS-------------------------------------*/
 void					set_bool(t_mtx *mtx, bool *var, bool value);
-bool					get_bool(t_mtx *mtx, bool *var);
+long					get_bool(t_mtx *mtx, bool *var);
 void					set_long(t_mtx *mtx, long *var, long value);
 long					get_long(t_mtx *mtx, long *var);
 
@@ -118,16 +118,16 @@ long					get_long(t_mtx *mtx, long *var);
 void					start_simulation(t_data *data);
 void					eat(t_philo *philo);
 void					think(t_philo *philo);
-void					sleep(t_philo *philo);
+void					rest(t_philo *philo);
+void					take_forks(t_philo *philo);
+void					return_forks(t_philo *philo);
 
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);
 
 /*-------------------WRITE STATUS--------------------------------------------*/
-void					write_status(t_status status, t_philo *philo,
-							bool debug);
-void					write_debug_status(t_status status, t_philo *philo,
-							bool debug);
+void					write_status(int status, t_philo *philo);
+void					write_debug_status(int status, t_philo *philo);
 
 /*-------------------TIME----------------------------------------------------*/
 long					get_time_in_ms(void);

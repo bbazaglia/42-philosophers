@@ -14,9 +14,6 @@
 
 void	take_forks(t_philo *philo)
 {
-	t_data	*data;
-
-	data = philo->data;
 	safe_mutex(LOCK, &philo->first_fork->fork_mutex);
 	safe_print(philo, TOOK_FIRST_FORK, false);
 	safe_mutex(LOCK, &philo->second_fork->fork_mutex);
@@ -25,9 +22,6 @@ void	take_forks(t_philo *philo)
 
 void	return_forks(t_philo *philo)
 {
-	t_data	*data;
-
-	data = philo->data;
 	safe_mutex(UNLOCK, &philo->first_fork->fork_mutex);
 	safe_mutex(UNLOCK, &philo->second_fork->fork_mutex);
 }

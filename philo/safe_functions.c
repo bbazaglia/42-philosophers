@@ -39,12 +39,12 @@ void	safe_mutex(t_action action, t_mtx *mtx)
 }
 
 void	safe_thread(t_action action, pthread_t *thread,
-		void *(*routine)(void *), t_data *data)
+		void *(*routine)(void *), t_philo *philo)
 {
 	int	status;
 
 	if (action == CREATE)
-		status = pthread_create(thread, NULL, routine, data);
+		status = pthread_create(thread, NULL, routine, philo);
 	else if (action == JOIN)
 		status = pthread_join(*thread, NULL);
 	else if (action == DETACH)
@@ -53,7 +53,7 @@ void	safe_thread(t_action action, pthread_t *thread,
 		exit(printf("Thread error\n"));
 }
 
-void	safe_print(t_philo *philo, t_status status, bool debug)
+void	safe_print(t_philo *philo, int status, bool debug)
 {
 	t_data	*data;
 
