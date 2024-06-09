@@ -15,9 +15,9 @@
 void	take_forks(t_philo *philo)
 {
 	safe_mutex(LOCK, &philo->first_fork->fork_mutex);
-	safe_print(philo, TOOK_FIRST_FORK, false);
+	safe_print(philo, TOOK_FIRST_FORK, DEBUG);
 	safe_mutex(LOCK, &philo->second_fork->fork_mutex);
-	safe_print(philo, TOOK_SECOND_FORK, false);
+	safe_print(philo, TOOK_SECOND_FORK, DEBUG);
 }
 
 void	return_forks(t_philo *philo)

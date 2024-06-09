@@ -39,7 +39,7 @@ static void *single_routine(void *data_ptr)
     data = philo->data; // access the data field in the struct t_philo
     set_long(&(philo->philo_mutex), &(philo->last_meal), data->start_time);
     safe_mutex(LOCK, &(philo->first_fork->fork_mutex));
-    safe_print(philo, TOOK_FIRST_FORK, false);
+    safe_print(philo, TOOK_FIRST_FORK, DEBUG);
     safe_mutex(UNLOCK, &(philo->first_fork->fork_mutex));
 	return (NULL);
 }
@@ -58,6 +58,7 @@ static void	*multiple_routine(void *data_ptr)
 		eat(philo);
 		rest(philo);
 		think(philo);
+        monitor(data);
 	}
 	return (NULL);
 }

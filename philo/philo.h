@@ -22,6 +22,7 @@
 # include <unistd.h>
 
 # define PAUSE 100
+#define DEBUG true
 
 /*-------------------ANSI Escape Sequences for Bold Text Colors--------------*/
 # define RST "\033[0m"    /* Reset to default color */
@@ -124,6 +125,7 @@ void					return_forks(t_philo *philo);
 
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);
+void 					*monitor(void *data_ptr);
 
 /*-------------------WRITE STATUS--------------------------------------------*/
 void					write_status(int status, t_philo *philo);

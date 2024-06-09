@@ -62,8 +62,8 @@ void	safe_print(t_philo *philo, int status, bool debug)
 		return ;
 	safe_mutex(LOCK, &(data->print_mutex));
 	if (debug)
-		write_debug_status(status, philo, false);
+		write_debug_status(status, philo);
 	else
-		write_status(status, philo, false);
+		write_status(status, philo);
 	safe_mutex(UNLOCK, &(data->print_mutex));
 }

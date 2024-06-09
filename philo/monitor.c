@@ -45,7 +45,7 @@ void *monitor(void *data_ptr)
 			if ((get_time_in_ms() - get_long(&(data->philos[i].philo_mutex),
 					&(data->philos[i].last_meal))) > data->time_to_die)
 			{
-				safe_print(&(data->philos[i]), DEAD, false);
+				safe_print(&(data->philos[i]), DEAD, DEBUG);
 				set_bool(&(data->data_mutex), &(data->end_simulation), true);
 				break ;
 			}
