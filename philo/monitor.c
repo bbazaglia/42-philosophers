@@ -38,7 +38,7 @@ void *monitor(void *data_ptr)
 
 	data = (t_data *)data_ptr;
 	if (all_philosophers_full(data))
-			set_bool(&(data->data_mutex), &(data->end_simulation), true);
+		set_bool(&(data->data_mutex), &(data->end_simulation), true);
 	while (!simulation_finished(data))
 	{
 		i = 0;
