@@ -90,7 +90,7 @@ typedef struct s_data
 	bool				end_simulation;
 	bool				all_threads_created;
 	t_fork				*forks;
-	t_philo				*philos;
+	t_philo				*philos;  // array of t_philo structs
 	t_mtx				data_mutex;
 	t_mtx				print_mutex;
 }						t_data;
@@ -118,7 +118,7 @@ long					get_long(t_mtx *mtx, long *var);
 void					start_simulation(t_data *data);
 void					eat(t_philo *philo);
 void					think(t_philo *philo);
-void					rest(t_philo *philo);
+void					sleep(t_philo *philo);
 
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);

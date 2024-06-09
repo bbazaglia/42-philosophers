@@ -25,7 +25,7 @@ void	eat(t_philo *philo)
 		+ data->time_to_eat;
 	while (get_time_in_ms() < end_eating_time)
 	{
-		if (simulation_finished(data) || philo->full)
+		if (simulation_finished(data))
 			break ;
 		usleep(PAUSE);
 	}
@@ -35,14 +35,24 @@ void	eat(t_philo *philo)
 		set_bool(&(philo->philo_mutex), &(philo->full), true);
 }
 
+void	sleep(t_philo *philo)
+{
+	long end_sleeping_time;
+	t_data *data;
+
+	data = philo->data;
+	safe_print(philo, SLEEPING, false);
+	end_sleeping_time = get_time_in_ms() + data->time_to_sleep;
+	while (get_time_in_ms() < end_sleeping_time)
+	{
+		if (simulation_finished(data) || philo->full)
+			break ;
+	usleep(PAUSE);
+	}
+}
+
 void	think(t_philo *philo)
 {
 	safe_print(THINKING, philo, false);
-	usleep(PAUSE);
-}
-
-void	rest(t_philo *philo)
-{
-	safe_print(philo, SLEEPING, false);
 	usleep(PAUSE);
 }

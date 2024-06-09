@@ -60,10 +60,10 @@ void	safe_print(t_philo *philo, t_status status, bool debug)
 	data = philo->data;
 	if (simulation_finished(data))
 		return ;
-	safe_mutex(LOCK, &(data->write_mutex));
+	safe_mutex(LOCK, &(data->print_mutex));
 	if (debug)
-		write_debug_status(status, philo);
+		write_debug_status(status, philo, false);
 	else
-		write_status(status, philo);
-	safe_mutex(UNLOCK, &(data->write_mutex));
+		write_status(status, philo, false);
+	safe_mutex(UNLOCK, &(data->print_mutex));
 }

@@ -26,15 +26,15 @@ static void	assign_forks(int philo_pos, t_data *data)
 {
 	if (philo_pos % 2 == 0)
 	{
-		data->philo[philo_pos].first_fork = &(data->forks[philo_pos]);
-		data->philo[philo_pos].second_fork = &(data->forks[(philo_pos + 1)
+		data->philos[philo_pos].first_fork = &(data->forks[philo_pos]);
+		data->philos[philo_pos].second_fork = &(data->forks[(philo_pos + 1)
 				% data->num_philo]);
 	}
 	else
 	{
-		data->philo[philo_pos].first_fork = &(data->forks[(philo_pos + 1)
+		data->philos[philo_pos].first_fork = &(data->forks[(philo_pos + 1)
 				% data->num_philo]);
-		data->philo[philo_pos].second_fork = &(data->forks[philo_pos]);
+		data->philos[philo_pos].second_fork = &(data->forks[philo_pos]);
 	}
 }
 
@@ -46,7 +46,7 @@ static void	init_philos(t_data *data)
 	i = 0;
 	while (i < data->num_philo)
 	{
-		philo = &(data->philo[i]);
+		philo = &(data->philos[i]);
 		philo->id = i + 1;
 		philo->meals_eaten = 0;
 		philo->last_meal = 0;
@@ -63,9 +63,9 @@ void	init_data(t_data *data, char **argv)
 	int	i;
 
 	data->num_philo = ft_atol(argv[1]);
-	data->time_to_die = ft_atol(argv[2]) * 1000;
-	data->time_to_eat = ft_atol(argv[3]) * 1000;
-	data->time_to_sleep = ft_atol(argv[4]) * 1000;
+	data->time_to_die = ft_atol(argv[2]);
+	data->time_to_eat = ft_atol(argv[3]);
+	data->time_to_sleep = ft_atol(argv[4]);
 	data->end_simulation = false;
 	if (argv[5])
 		data->meals_required = ft_atol(argv[5]);
