@@ -17,7 +17,7 @@ bool	simulation_finished(t_data *data)
 	return (get_bool(&(data->data_mutex), &(data->end_simulation)));
 }
 
-static bool	all_philosophers_full(t_data *data)
+bool	all_philosophers_full(t_data *data)
 {
 	int i;
 
@@ -37,6 +37,8 @@ void *monitor(void *data_ptr)
 	int		i;
 
 	data = (t_data *)data_ptr;
+	if (all_philosophers_full(data))
+			set_bool(&(data->data_mutex), &(data->end_simulation), true);
 	while (!simulation_finished(data))
 	{
 		i = 0;
@@ -51,8 +53,7 @@ void *monitor(void *data_ptr)
 			}
 			i++;
 		}
-		if (all_philosophers_full(data))
-			set_bool(&(data->data_mutex), &(data->end_simulation), true);
+		usleep(PAUSE);
 	}
 	return (NULL);
 }

@@ -126,6 +126,8 @@ void					return_forks(t_philo *philo);
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);
 void 					*monitor(void *data_ptr);
+bool					all_philosophers_full(t_data *data);
+
 
 /*-------------------WRITE STATUS--------------------------------------------*/
 void					write_status(int status, t_philo *philo);
