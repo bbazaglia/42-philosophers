@@ -123,10 +123,11 @@ void					rest(t_philo *philo);
 void					take_forks(t_philo *philo);
 void					return_forks(t_philo *philo);
 
+
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);
-void 					*monitor(void *data_ptr);
-bool					all_philosophers_full(t_data *data);
+void 					monitor(t_data *data);
+void 					wait_threads_creation(t_data *data);
 
 
 /*-------------------WRITE STATUS--------------------------------------------*/

@@ -19,8 +19,8 @@ void	eat(t_philo *philo)
 
 	data = philo->data;
 	take_forks(philo);
-	set_long(&(philo->philo_mutex), &(philo->last_meal), get_time_in_ms());
-	end_eating_time = get_long(&(philo->philo_mutex), &(philo->last_meal)) + data->time_to_eat;
+	set_long(&philo->philo_mutex, &philo->last_meal, get_time_in_ms());
+	end_eating_time = get_long(&philo->philo_mutex, &philo->last_meal) + data->time_to_eat;
 	while (get_time_in_ms() < end_eating_time)
 	{
 		if (simulation_finished(data))
@@ -46,12 +46,29 @@ void	rest(t_philo *philo)
 	{
 		if (simulation_finished(data))
 			break ;
-	usleep(PAUSE);
+		usleep(PAUSE);
 	}
 }
 
 void	think(t_philo *philo)
 {
+	long end_thinking_time;
+	t_data *data;
+
 	safe_print(philo, THINKING, DEBUG);
-	usleep(PAUSE);
+	data = philo->data;
+	end_thinking_time = (data->time_to_die - get_time_in_ms() - philo->last_meal - data->time_to_eat) / 2;
+	if (end_thinking_time < 0)
+		return ;
+	if (end_thinking_time > 500)
+		end_thinking_time = 500;
+	else
+	{
+		while (get_time_in_ms() < end_thinking_time)
+		{
+			if (simulation_finished(data))
+				break ;
+			usleep(PAUSE);
+		}
+	}
 }

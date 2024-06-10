@@ -12,49 +12,39 @@
 
 #include "philo.h"
 
-bool	simulation_finished(t_data *data)
+bool simulation_finished(t_data *data)
 {
 	return (get_bool(&(data->data_mutex), &(data->end_simulation)));
 }
 
-bool	all_philosophers_full(t_data *data)
+void wait_threads_creation(t_data *data)
+{
+	while (!get_bool(&(data->data_mutex), &(data->all_threads_created)))
+		;
+}
+
+void monitor(t_data *data)
 {
 	int i;
+    bool all_full;
+    t_philo *philos;
 
 	i = 0;
-	while (i < data->num_philo)
-	{
-		if (!get_bool(&(data->philos[i].philo_mutex), &(data->philos[i].full)))
-			return (false);
+	all_full = true;
+	philos = data->philos;
+    wait_threads_creation(data);
+    while (i < data->num_philo)
+    {
+        if (get_time_in_ms() > get_long(&philos[i].philo_mutex, &philos[i].last_meal) + data->time_to_die)
+        {
+            safe_print(&philos[i], DEAD, DEBUG);
+            set_bool(&data->data_mutex, &data->end_simulation, true);
+            return ;
+        }
+        if (!get_bool(&philos[i].philo_mutex, &philos[i].full))
+            all_full = false;
 		i++;
-	}
-	return (true);
+    }
+    if (all_full)
+        set_bool(&data->data_mutex, &data->end_simulation, true);
 }
-
-void *monitor(void *data_ptr)
-{
-	t_data	*data;
-	int		i;
-
-	data = (t_data *)data_ptr;
-	if (all_philosophers_full(data))
-		set_bool(&(data->data_mutex), &(data->end_simulation), true);
-	while (!simulation_finished(data))
-	{
-		i = 0;
-		while (i < data->num_philo)
-		{
-			if ((get_time_in_ms() - get_long(&(data->philos[i].philo_mutex),
-					&(data->philos[i].last_meal))) > data->time_to_die)
-			{
-				safe_print(&(data->philos[i]), DEAD, DEBUG);
-				set_bool(&(data->data_mutex), &(data->end_simulation), true);
-				break ;
-			}
-			i++;
-		}
-		usleep(PAUSE);
-	}
-	return (NULL);
-}
-

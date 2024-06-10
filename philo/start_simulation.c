@@ -23,13 +23,6 @@ philo is a pointer to a t_philo struct (t_philo *philo)
 Use the arrow operator to access members: philo->member.
 */
 
-
-static void	wait_threads_creation(t_data *data)
-{
-	while (!get_bool(&(data->data_mutex), &(data->all_threads_created)))
-		;
-}
-
 static void *single_routine(void *data_ptr)
 {
     t_philo *philo; 
@@ -41,6 +34,8 @@ static void *single_routine(void *data_ptr)
     safe_mutex(LOCK, &(philo->first_fork->fork_mutex));
     safe_print(philo, TOOK_FIRST_FORK, DEBUG);
     safe_mutex(UNLOCK, &(philo->first_fork->fork_mutex));
+    while (!simulation_finished(data))
+        ;
 	return (NULL);
 }
 
@@ -51,14 +46,11 @@ static void	*multiple_routine(void *data_ptr)
 
 	philo = (t_philo *)data_ptr;
 	data = philo->data;
-	wait_threads_creation(data);
-	set_long(&(philo->philo_mutex), &(philo->last_meal), data->start_time);
 	while (!simulation_finished(data))
 	{
 		eat(philo);
 		rest(philo);
 		think(philo);
-        monitor(data);
 	}
 	return (NULL);
 }
@@ -75,11 +67,14 @@ void start_simulation(t_data *data)
     {
         while (i < data->num_philo)
         {
+            set_long(&(data->philos[i].philo_mutex), &(data->philos[i].last_meal), data->start_time);
             safe_thread(CREATE, &(data->philos[i].thread_id), multiple_routine, &(data->philos[i]));
             i++;
         }
     }
     set_bool(&(data->data_mutex), &(data->all_threads_created), true);
+    while (!simulation_finished(data))
+        monitor(data);
     i = 0;
     while (i < data->num_philo)
     {
@@ -87,4 +82,3 @@ void start_simulation(t_data *data)
         i++;
     }
 }
-
