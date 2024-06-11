@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 11:19:57 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/07 15:13:00 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/11 09:35:21 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ void	safe_mutex(t_action action, t_mtx *mtx)
 {
 	int	status;
 
+	status = 0;
 	if (action == LOCK)
 		status = pthread_mutex_lock(mtx);
 	else if (action == UNLOCK)
@@ -43,6 +44,7 @@ void	safe_thread(t_action action, pthread_t *thread,
 {
 	int	status;
 
+	status = 0;
 	if (action == CREATE)
 		status = pthread_create(thread, NULL, routine, philo);
 	else if (action == JOIN)

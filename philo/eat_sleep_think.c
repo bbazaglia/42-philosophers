@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:20:37 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/07 15:13:35 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/11 10:10:32 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ void	eat(t_philo *philo)
 	data = philo->data;
 	take_forks(philo);
 	set_long(&philo->philo_mutex, &philo->last_meal, get_time_in_ms());
-	end_eating_time = get_long(&philo->philo_mutex, &philo->last_meal) + data->time_to_eat;
+	end_eating_time = get_long(&philo->philo_mutex, &philo->last_meal)
+		+ data->time_to_eat;
 	while (get_time_in_ms() < end_eating_time)
 	{
 		if (simulation_finished(data))
@@ -36,8 +37,8 @@ void	eat(t_philo *philo)
 
 void	rest(t_philo *philo)
 {
-	long end_sleeping_time;
-	t_data *data;
+	long	end_sleeping_time;
+	t_data	*data;
 
 	data = philo->data;
 	safe_print(philo, SLEEPING, DEBUG);
@@ -52,12 +53,13 @@ void	rest(t_philo *philo)
 
 void	think(t_philo *philo)
 {
-	long end_thinking_time;
-	t_data *data;
+	long	end_thinking_time;
+	t_data	*data;
 
 	safe_print(philo, THINKING, DEBUG);
 	data = philo->data;
-	end_thinking_time = (data->time_to_die - get_time_in_ms() - philo->last_meal - data->time_to_eat) / 2;
+	end_thinking_time = (data->time_to_die - get_time_in_ms() - philo->last_meal
+			- data->time_to_eat) / 2;
 	if (end_thinking_time < 0)
 		return ;
 	if (end_thinking_time > 500)

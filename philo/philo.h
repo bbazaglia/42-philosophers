@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:04 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/07 15:11:36 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/11 10:24:45 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,6 @@
 # include <sys/time.h>
 # include <unistd.h>
 
-# define PAUSE 100
-#define DEBUG true
-
 /*-------------------ANSI Escape Sequences for Bold Text Colors--------------*/
 # define RST "\033[0m"    /* Reset to default color */
 # define RED "\033[1;31m" /* Bold Red */
@@ -33,6 +30,9 @@
 # define M "\033[1;35m"   /* Bold Magenta */
 # define C "\033[1;36m"   /* Bold Cyan */
 # define W "\033[1;37m"   /* Bold White */
+
+# define PAUSE 100
+# define DEBUG 0
 
 /*-------------------STRUCTS-------------------------------------------------*/
 
@@ -51,7 +51,7 @@ typedef enum e_action
 	DETACH,
 }						t_action;
 
-enum e_status
+enum					e_status
 {
 	EATING,
 	SLEEPING,
@@ -91,7 +91,7 @@ typedef struct s_data
 	bool				end_simulation;
 	bool				all_threads_created;
 	t_fork				*forks;
-	t_philo				*philos;  // array of t_philo structs
+	t_philo				*philos;
 	t_mtx				data_mutex;
 	t_mtx				print_mutex;
 }						t_data;
@@ -122,13 +122,12 @@ void					think(t_philo *philo);
 void					rest(t_philo *philo);
 void					take_forks(t_philo *philo);
 void					return_forks(t_philo *philo);
-
+void					wait_threads_end(t_data *data);
 
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);
-void 					monitor(t_data *data);
-void 					wait_threads_creation(t_data *data);
-
+void					monitor(t_data *data);
+void					wait_threads_creation(t_data *data);
 
 /*-------------------WRITE STATUS--------------------------------------------*/
 void					write_status(int status, t_philo *philo);
