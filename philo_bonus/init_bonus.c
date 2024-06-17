@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:49:01 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 10:16:48 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 12:02:05 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ static void	create_processes(t_data *data, int i)
 	if (data->philo[i].pid == 0)
 	{
 		if (data->num_philo == 1)
-			single_routine(&(data->philo[i]));
+			single_routine(data, &data->philo[i]);
 		else
-			multiple_routine(&data->philo[i]);
+			multiple_routine(data, &data->philo[i]);
 	}
 }
 
@@ -43,6 +43,7 @@ static void	init_philos(t_data *data)
 		create_processes(data, i);
 		i++;
 	}
+	father_process(data);
 }
 
 void	init_data(t_data *data, char **argv)

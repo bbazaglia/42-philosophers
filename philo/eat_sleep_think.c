@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/04 17:20:37 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/11 10:10:32 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 12:35:45 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	eat(t_philo *philo)
 	set_long(&philo->philo_mutex, &philo->last_meal, get_time_in_ms());
 	end_eating_time = get_long(&philo->philo_mutex, &philo->last_meal)
 		+ data->time_to_eat;
+	safe_print(philo, EATING, DEBUG);
 	while (get_time_in_ms() < end_eating_time)
 	{
 		if (simulation_finished(data))
@@ -29,7 +30,6 @@ void	eat(t_philo *philo)
 		usleep(PAUSE);
 	}
 	philo->meals_eaten++;
-	safe_print(philo, EATING, DEBUG);
 	return_forks(philo);
 	if (philo->meals_eaten == data->meals_required)
 		set_bool(&(philo->philo_mutex), &(philo->full), true);

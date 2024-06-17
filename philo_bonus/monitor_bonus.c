@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 15:09:27 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 10:56:20 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 14:54:34 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,35 +21,24 @@ bool	simulation_finished(t_data *data)
 
 int	exit_child(t_data *data, int status)
 {
-	sem_post(data->forks_sem);
 	sem_unlink("forks");
 	sem_unlink("print");
 	sem_close(data->forks_sem);
 	sem_close(data->print_sem);
 	free(data->philo);
-	exit (status);
+	exit(status);
 }
 
-int	monitor(t_data *data)
+void	monitor(t_philo *philo)
 {
-	int		i;
-	t_philo	*philo;
-
-	i = 0;
-	philo = data->philo;
-	printf("time: %ld\n", get_time_in_ms());
-	printf("start_time: %ld\n", data->start_time);
-	printf("timestamp: %ld\n",timestamp(data->start_time));
-	if (get_time_in_ms() > philo->last_meal + data->time_to_die)
+	if (get_time_in_ms() > philo->last_meal + philo->data->time_to_die)
 	{
-		safe_print(&philo[i], DEAD, DEBUG);
-		data->end_simulation = true;
-		return (exit_child(data, DEAD));
+		philo->data->end_simulation = true;
+		exit_child(philo->data, DEAD);
 	}
-	if (philo->meals_eaten == data->meals_required)
+	if (philo->meals_eaten == philo->data->meals_required)
 	{
-		data->end_simulation = true;
-		return (exit_child(data, FULL));
+		philo->data->end_simulation = true;
+		exit_child(philo->data, FULL);
 	}
-	return (0);
 }

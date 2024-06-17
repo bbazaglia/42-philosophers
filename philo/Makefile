@@ -6,7 +6,7 @@
 #    By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/06/03 11:39:42 by bbazagli          #+#    #+#              #
-#    Updated: 2024/06/11 09:39:21 by bbazagli         ###   ########.fr        #
+#    Updated: 2024/06/17 14:57:04 by bbazagli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,6 +21,30 @@ OBJ = $(patsubst %.c,$(OBJDIR)/%.o,$(SOURCE))
 
 all: $(OBJ)
 	@$(CC) $(OBJ) -o $(NAME) -pthread
+
+val: all
+	valgrind \
+		--leak-check=full \
+		--show-leak-kinds=all \
+		--track-origins=yes \
+		--trace-children=yes \
+		./$(NAME) 5 10000 200 200 5
+#       --log-file=valgrind-out.txt \
+
+hel: all
+	valgrind \
+		--tool=helgrind \
+		--history-level=none \
+		-s \
+		./$(NAME) 5 1800 200 200 5
+#       --log-file=helgrind-out.txt \
+
+drd: all
+	valgrind \
+		--tool=drd \
+		-s \
+		./$(NAME) 5 1800 200 200 5
+#       --log-file=drd-out.txt \
 
 $(OBJDIR)/%.o: %.c
 	@mkdir -p $(OBJDIR)

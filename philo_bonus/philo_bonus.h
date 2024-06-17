@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:04 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 10:50:44 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 14:23:59 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 # define C "\033[1;36m"   /* Bold Cyan */
 # define W "\033[1;37m"   /* Bold White */
 
-# define PAUSE 100
+# define PAUSE 1000
 # define DEBUG 0
 
 /*-------------------STRUCTS-------------------------------------------------*/
@@ -107,8 +107,8 @@ void					set_sem(sem_t *sem, long *value, long new_value);
 long					get_sem(sem_t *sem, long *value);
 
 /*-------------------ROUTINE-------------------------------------------------*/
-void					single_routine(void *data_ptr);
-void					multiple_routine(void *data_ptr);
+void					single_routine(t_data *data, t_philo *philo);
+void					multiple_routine(t_data *data, t_philo *philo);
 void					eat(t_philo *philo);
 void					think(t_philo *philo);
 void					rest(t_philo *philo);
@@ -118,8 +118,7 @@ void					father_process(t_data *data);
 
 /*-------------------MONITOR-------------------------------------------------*/
 bool					simulation_finished(t_data *data);
-int						monitor(t_data *data);
-void					wait_threads_creation(t_data *data);
+void					monitor(t_philo *philo);
 
 /*-------------------WRITE STATUS--------------------------------------------*/
 void					write_status(int status, t_philo *philo);
