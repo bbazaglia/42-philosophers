@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 15:09:27 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/11 17:24:37 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 10:56:20 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	exit_child(t_data *data, int status)
 	sem_close(data->forks_sem);
 	sem_close(data->print_sem);
 	free(data->philo);
-	return (status);
+	exit (status);
 }
 
 int	monitor(t_data *data)
@@ -37,6 +37,9 @@ int	monitor(t_data *data)
 
 	i = 0;
 	philo = data->philo;
+	printf("time: %ld\n", get_time_in_ms());
+	printf("start_time: %ld\n", data->start_time);
+	printf("timestamp: %ld\n",timestamp(data->start_time));
 	if (get_time_in_ms() > philo->last_meal + data->time_to_die)
 	{
 		safe_print(&philo[i], DEAD, DEBUG);

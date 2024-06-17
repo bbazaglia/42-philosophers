@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:04 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/11 17:21:49 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 10:50:44 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ typedef struct s_philo
 	long				meals_eaten;
 	long				last_meal;
 	bool				full;
+	bool				dead;
 	pid_t				pid;
 	t_data				*data;
 }						t_philo;
@@ -106,7 +107,8 @@ void					set_sem(sem_t *sem, long *value, long new_value);
 long					get_sem(sem_t *sem, long *value);
 
 /*-------------------ROUTINE-------------------------------------------------*/
-void					start_simulation(t_data *data);
+void					single_routine(void *data_ptr);
+void					multiple_routine(void *data_ptr);
 void					eat(t_philo *philo);
 void					think(t_philo *philo);
 void					rest(t_philo *philo);
