@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:51:48 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/11 17:24:19 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:33:47 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,15 @@ int	ft_isdigit(int c)
 
 void	cleanup(t_data *data)
 {
-	sem_unlink("forks");
 	sem_unlink("print");
+	sem_unlink("forks");
+	sem_unlink("death");
+	sem_unlink("full");
+	sem_unlink("end");
 	sem_close(data->print_sem);
 	sem_close(data->forks_sem);
+	sem_close(data->death_sem);
+	sem_close(data->full_sem);
+	sem_close(data->end_simulation);
 	free(data->philo);
 }

@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:04 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 14:23:59 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:58:28 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,9 +69,8 @@ typedef struct s_philo
 {
 	int					id;
 	long				meals_eaten;
-	long				last_meal;
-	bool				full;
-	bool				dead;
+	long 				last_meal;
+	sem_t				*last_meal_sem;
 	pid_t				pid;
 	t_data				*data;
 }						t_philo;
@@ -84,9 +83,14 @@ typedef struct s_data
 	int					time_to_sleep;
 	int					meals_required;
 	long				start_time;
-	bool				end_simulation;
+	long				simulation_finished;
+	sem_t				*end_simulation;
 	sem_t				*forks_sem;
 	sem_t				*print_sem;
+	sem_t				*death_sem;
+	sem_t				*full_sem;
+	pthread_t			death_monitor;
+	pthread_t			fullness_monitor;
 	t_philo				*philo;
 }						t_data;
 
@@ -95,16 +99,6 @@ typedef struct s_data
 /*-------------------PARSE INPUT---------------------------------------------*/
 void					args_validation(int argc, char **argv);
 void					init_data(t_data *data, char **argv);
-
-/*-------------------SAFE FUNCTIONS------------------------------------------*/
-void					*safe_malloc(size_t size);
-void					safe_print(t_philo *philo, int status, bool debug);
-sem_t					*safe_open_sem(char *name, int value);
-void					safe_action_sem(int action, sem_t *sem);
-
-/*-------------------GETTERS AND SETTERS-------------------------------------*/
-void					set_sem(sem_t *sem, long *value, long new_value);
-long					get_sem(sem_t *sem, long *value);
 
 /*-------------------ROUTINE-------------------------------------------------*/
 void					single_routine(t_data *data, t_philo *philo);
@@ -115,10 +109,20 @@ void					rest(t_philo *philo);
 void					take_forks(t_philo *philo);
 void					return_forks(t_philo *philo);
 void					father_process(t_data *data);
+void					kill_child_proc(t_data *data);
 
 /*-------------------MONITOR-------------------------------------------------*/
-bool					simulation_finished(t_data *data);
-void					monitor(t_philo *philo);
+bool					is_simulation_finished(t_data *data);
+void					init_monitor_threads(t_data *data);
+void					end_monitor_threads(t_data *data);
+void					end_simulation(t_data *data, int status);
+void					*death_monitor(void *arg);
+void					*fullness_monitor(void *arg);
+
+/*-------------------SAFE FUNCTIONS------------------------------------------*/
+void					safe_print(t_philo *philo, int status, bool debug);
+long					safe_get(sem_t *sem, long *value);
+void					safe_set(sem_t *sem, long *value, long new_value);
 
 /*-------------------WRITE STATUS--------------------------------------------*/
 void					write_status(int status, t_philo *philo);

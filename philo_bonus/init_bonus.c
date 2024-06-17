@@ -6,17 +6,35 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:49:01 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 12:02:05 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:58:17 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
+static void	*monitor(void *arg)
+{
+	t_philo	*philo;
+	t_data	*data;
+
+	philo = (t_philo *)arg;
+	data = philo->data;
+	while (!is_simulation_finished(data))
+	{
+		if ((get_time_in_ms() > safe_get(philo->last_meal_sem,
+					&philo->last_meal) + data->time_to_die))
+		{
+			safe_print(philo, DEAD, DEBUG);
+			sem_post(data->death_sem);
+			break ;
+		}
+	}
+	return (NULL);
+}
+
 static void	create_processes(t_data *data, int i)
 {
 	data->philo[i].pid = fork();
-	if (data->philo[i].pid < 0)
-		exit(printf("Error: fork\n"));
 	if (data->philo[i].pid == 0)
 	{
 		if (data->num_philo == 1)
@@ -24,6 +42,28 @@ static void	create_processes(t_data *data, int i)
 		else
 			multiple_routine(data, &data->philo[i]);
 	}
+}
+
+static void	create_semaphores(t_data *data)
+{
+	sem_unlink("print");
+	sem_unlink("forks");
+	sem_unlink("death");
+	sem_unlink("full");
+	sem_unlink("end");
+	data->print_sem = sem_open("print", O_CREAT, 0644, 1);
+	data->forks_sem = sem_open("forks", O_CREAT, 0644, data->num_philo);
+	data->death_sem = sem_open("death", O_CREAT, 0644, 0);
+	data->full_sem = sem_open("full", O_CREAT, 0644, 0);
+	data->end_simulation = sem_open("end", O_CREAT, 0644, 1);
+}
+
+static void	create_threads(t_philo *philo)
+{
+	pthread_t	philo_thread;
+
+	pthread_create(&philo_thread, NULL, monitor, philo);
+	pthread_detach(philo_thread);
 }
 
 static void	init_philos(t_data *data)
@@ -36,14 +76,14 @@ static void	init_philos(t_data *data)
 	{
 		data->philo[i].id = i + 1;
 		data->philo[i].meals_eaten = 0;
-		data->philo[i].full = false;
-		data->philo[i].dead = false;
 		data->philo[i].data = data;
-		data->philo[i].last_meal = 0;
 		create_processes(data, i);
+		create_threads(&data->philo[i]);
+		sem_unlink("last_meal");
+		data->philo[i].last_meal_sem = sem_open("last_meal", O_CREAT, 0644, 1);
+		sem_unlink("last_meal");
 		i++;
 	}
-	father_process(data);
 }
 
 void	init_data(t_data *data, char **argv)
@@ -56,12 +96,8 @@ void	init_data(t_data *data, char **argv)
 		data->meals_required = ft_atol(argv[5]);
 	else
 		data->meals_required = -1;
-	sem_unlink("forks");
-	sem_unlink("print");
-	data->print_sem = sem_open("print", O_CREAT, 0644, 1);
-	data->forks_sem = sem_open("forks", O_CREAT, 0644, data->num_philo);
-	data->end_simulation = false;
+	create_semaphores(data);
 	data->start_time = get_time_in_ms();
+	data->simulation_finished = 0;
 	init_philos(data);
 }
-

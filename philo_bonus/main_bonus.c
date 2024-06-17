@@ -6,7 +6,7 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/31 17:52:17 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 11:42:27 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:31:36 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ int	main(int argc, char **argv)
 	if (argc != 5 && argc != 6)
 		error_message();
 	args_validation(argc, argv);
+	init_monitor_threads(&data);
 	init_data(&data, argv);
+	end_monitor_threads(&data);
 	cleanup(&data);
 }

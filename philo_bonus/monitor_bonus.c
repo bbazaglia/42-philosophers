@@ -6,39 +6,72 @@
 /*   By: bbazagli <bbazagli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/07 15:09:27 by bbazagli          #+#    #+#             */
-/*   Updated: 2024/06/17 14:54:34 by bbazagli         ###   ########.fr       */
+/*   Updated: 2024/06/17 17:58:40 by bbazagli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-bool	simulation_finished(t_data *data)
+void	init_monitor_threads(t_data *data)
 {
-	if (data->end_simulation)
-		return (true);
-	return (false);
+	pthread_create(&data->death_monitor, NULL, death_monitor, data);
+	pthread_create(&data->fullness_monitor, NULL, fullness_monitor, data);
 }
 
-int	exit_child(t_data *data, int status)
+void	end_monitor_threads(t_data *data)
 {
-	sem_unlink("forks");
-	sem_unlink("print");
-	sem_close(data->forks_sem);
-	sem_close(data->print_sem);
-	free(data->philo);
-	exit(status);
+	pthread_join(data->death_monitor, NULL);
+	pthread_join(data->fullness_monitor, NULL);
+	while (waitpid(-1, NULL, 0) != -1)
+		;
 }
 
-void	monitor(t_philo *philo)
+// if the simulation ended for one reason, post the semaphore for the other,
+// so that the other thread can end the simulation
+void	end_simulation(t_data *data, int status)
 {
-	if (get_time_in_ms() > philo->last_meal + philo->data->time_to_die)
+	int i;
+
+	safe_set(data->end_simulation, &data->simulation_finished, 1);
+	kill_child_proc(data);
+	if (status == FULL)
+		sem_post(data->death_sem);
+	if (status == DEAD)
 	{
-		philo->data->end_simulation = true;
-		exit_child(philo->data, DEAD);
+		i = 0;
+		while (i < data->num_philo)
+		{
+			sem_post(data->full_sem);
+			i++;
+		}
 	}
-	if (philo->meals_eaten == philo->data->meals_required)
+}
+
+void	*death_monitor(void *arg)
+{
+	t_data	*data;
+
+	data = (t_data *)arg;
+	sem_wait(data->death_sem);
+	if (!data->end_simulation)
+		end_simulation(data, DEAD);
+	return (NULL);
+}
+
+void	*fullness_monitor(void *arg)
+{
+	t_data	*data;
+	int		full_count;
+
+	data = (t_data *)arg;
+	full_count = 0;
+	while (!is_simulation_finished(data))
 	{
-		philo->data->end_simulation = true;
-		exit_child(philo->data, FULL);
+		sem_wait(data->full_sem);
+		full_count++;
+		if (full_count == data->num_philo)
+			break ;
 	}
+	end_simulation(data, FULL);
+	return (NULL);
 }
