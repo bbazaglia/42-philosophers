@@ -45,15 +45,6 @@ typedef pthread_mutex_t	t_mtx;
 
 typedef struct s_data	t_data;
 
-enum					e_action
-{
-	OPEN,
-	CLOSE,
-	POST,
-	WAIT,
-	UNLINK,
-};
-
 enum					e_status
 {
 	EATING,
@@ -98,11 +89,17 @@ typedef struct s_data
 
 /*-------------------PARSE INPUT---------------------------------------------*/
 void					args_validation(int argc, char **argv);
+
+/*-------------------INIT DATA-----------------------------------------------*/
 void					init_data(t_data *data, char **argv);
+void					create_processes(t_data *data, int i);
+void					create_philo_thread(t_philo *philo);
+void					create_semaphores(t_data *data);
+void					init_philos(t_data *data);
 
 /*-------------------ROUTINE-------------------------------------------------*/
 void					single_routine(t_data *data, t_philo *philo);
-void					multiple_routine(t_data *data, t_philo *philo);
+void					multiple_routine(t_philo *philo);
 void					eat(t_philo *philo);
 void					think(t_philo *philo);
 void					rest(t_philo *philo);
@@ -112,7 +109,7 @@ void					father_process(t_data *data);
 void					kill_child_proc(t_data *data);
 
 /*-------------------MONITOR-------------------------------------------------*/
-bool					is_simulation_finished(t_data *data);
+void					*monitor(void *arg);
 void					init_monitor_threads(t_data *data);
 void					end_monitor_threads(t_data *data);
 void					end_simulation(t_data *data, int status);
@@ -120,6 +117,7 @@ void					*death_monitor(void *arg);
 void					*fullness_monitor(void *arg);
 
 /*-------------------SAFE FUNCTIONS------------------------------------------*/
+long					is_simulation_finished(t_data *data);
 void					safe_print(t_philo *philo, int status, bool debug);
 long					safe_get(sem_t *sem, long *value);
 void					safe_set(sem_t *sem, long *value, long new_value);

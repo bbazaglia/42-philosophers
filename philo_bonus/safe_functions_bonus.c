@@ -12,6 +12,11 @@
 
 #include "philo_bonus.h"
 
+long	is_simulation_finished(t_data *data)
+{
+	return (safe_get(data->end_simulation, &data->simulation_finished));
+}
+
 void	safe_print(t_philo *philo, int status, bool debug)
 {
 	t_data	*data;

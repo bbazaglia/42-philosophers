@@ -12,24 +12,25 @@
 
 #include "philo_bonus.h"
 
-bool	is_simulation_finished(t_data *data)
-{
-	if (data->simulation_finished)
-		return (true);
-	return (false);
-}
-
 void	single_routine(t_data *data, t_philo *philo)
 {
+	sem_unlink("last_meal");
+	philo->last_meal_sem = sem_open("last_meal", O_CREAT, 0644, 1);
+	sem_unlink("last_meal");
+	create_philo_thread(philo);
 	sem_wait(data->forks_sem);
 	safe_print(philo, TOOK_FIRST_FORK, DEBUG);
-	while (!is_simulation_finished(data))
+	while (true)
 		;
 }
 
-void	multiple_routine(t_data *data, t_philo *philo)
+void	multiple_routine(t_philo *philo)
 {
-	while (!is_simulation_finished(data))
+	sem_unlink("last_meal");
+	philo->last_meal_sem = sem_open("last_meal", O_CREAT, 0644, 1);
+	sem_unlink("last_meal");
+	create_philo_thread(philo);
+	while (true)
 	{
 		eat(philo);
 		rest(philo);
@@ -49,3 +50,23 @@ void	kill_child_proc(t_data *data)
 	}
 }
 
+// if the simulation ended for one reason, post the semaphore for the other,
+// so that the other thread can end the simulation
+void	end_simulation(t_data *data, int status)
+{
+	int i;
+
+	safe_set(data->end_simulation, &data->simulation_finished, 1);
+	kill_child_proc(data);
+	if (status == FULL)
+		sem_post(data->death_sem);
+	if (status == DEAD)
+	{
+		i = 0;
+		while (i < data->num_philo)
+		{
+			sem_post(data->full_sem);
+			i++;
+		}
+	}
+}

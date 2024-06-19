@@ -19,8 +19,9 @@ int	main(int argc, char **argv)
 	if (argc != 5 && argc != 6)
 		error_message();
 	args_validation(argc, argv);
-	init_monitor_threads(&data);
 	init_data(&data, argv);
+	init_monitor_threads(&data);
+	init_philos(&data);
 	end_monitor_threads(&data);
 	cleanup(&data);
 }

@@ -12,39 +12,38 @@
 
 #include "philo_bonus.h"
 
-void	init_monitor_threads(t_data *data)
+void	*monitor(void *arg)
+{
+	t_philo	*philo;
+	t_data	*data;
+
+	philo = (t_philo *)arg;
+	data = philo->data;
+	while (true)
+	{
+		if ((get_time_in_ms() > safe_get(philo->last_meal_sem,
+					&philo->last_meal) + data->time_to_die))
+		{
+			safe_print(philo, DEAD, DEBUG);
+			sem_post(data->death_sem);
+			break ;
+		}
+	}
+	return (NULL);
+}
+
+void init_monitor_threads(t_data *data)
 {
 	pthread_create(&data->death_monitor, NULL, death_monitor, data);
 	pthread_create(&data->fullness_monitor, NULL, fullness_monitor, data);
 }
 
-void	end_monitor_threads(t_data *data)
+void end_monitor_threads(t_data *data)
 {
 	pthread_join(data->death_monitor, NULL);
 	pthread_join(data->fullness_monitor, NULL);
 	while (waitpid(-1, NULL, 0) != -1)
 		;
-}
-
-// if the simulation ended for one reason, post the semaphore for the other,
-// so that the other thread can end the simulation
-void	end_simulation(t_data *data, int status)
-{
-	int i;
-
-	safe_set(data->end_simulation, &data->simulation_finished, 1);
-	kill_child_proc(data);
-	if (status == FULL)
-		sem_post(data->death_sem);
-	if (status == DEAD)
-	{
-		i = 0;
-		while (i < data->num_philo)
-		{
-			sem_post(data->full_sem);
-			i++;
-		}
-	}
 }
 
 void	*death_monitor(void *arg)
@@ -53,7 +52,7 @@ void	*death_monitor(void *arg)
 
 	data = (t_data *)arg;
 	sem_wait(data->death_sem);
-	if (!data->end_simulation)
+	if (!is_simulation_finished(data))
 		end_simulation(data, DEAD);
 	return (NULL);
 }
@@ -65,13 +64,14 @@ void	*fullness_monitor(void *arg)
 
 	data = (t_data *)arg;
 	full_count = 0;
-	while (!is_simulation_finished(data))
+	while (true)
 	{
 		sem_wait(data->full_sem);
 		full_count++;
 		if (full_count == data->num_philo)
 			break ;
 	}
-	end_simulation(data, FULL);
+	if (!is_simulation_finished(data))
+		end_simulation(data, FULL);
 	return (NULL);
 }
